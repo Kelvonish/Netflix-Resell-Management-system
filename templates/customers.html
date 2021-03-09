@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+<!-- MAIN -->
+{% block nav%}
+<li><a href="{% url 'dashboard' %}" class=""><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
+<li><a href="{% url 'accounts' %}" class=""><i class="lnr lnr-map"></i> <span>Netflix Accounts</span></a></li>
+<li><a href="{% url 'customers'%}" class="active"><i class="lnr lnr-users"></i> <span>Customers</span></a></li>
+<li><a href="{% url 'cards' %}" class=""><i class="fa fa-credit-card"></i> <span>Cards</span></a></li>
+<li><a href="{% url 'logout' %}" class=""><i class="fa fa-sign-out"></i> <span>Logout</span></a></li>
+{% endblock %} {%block content %}
+<div class="main">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid">
+            {% if messages %}
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> {{message}}
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- RECENT PURCHASES -->
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Add New Customer</h3>
+                            <div class="right">
+                                <button type="button" class="btn-toggle-collapse">
+                  <i class="lnr lnr-chevron-up"></i>
+                </button>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="panel-body">
+                                <form method="POST" action="" class="form-groups">
+                                    {% if form.errors %} {% for field in form %} {% for error in field.errors %}
+                                    <div class="alert alert-danger alert-dismissible" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button> {{ error|escape }}
+                                    </div>
+
+                                    {% endfor %} {% endfor %} {% endif %} {% csrf_token %} {{ customerForm.as_p }}
+                                    <input type="submit" value="Submit" class="btn btn-primary ml-5 mb-5" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END RECENT PURCHASES -->
+                </div>
+            </div>
+
+            <div class="row container-fluid">
+                <div class="col-md-12">
+                    <!-- TABLE HOVER -->
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Customer Accounts that are Due</h3>
+                        </div>
+                        <div class="panel-body table-responsive-md">
+                            <table class="table table-hover" id="table">
+                                <thead>
+                                    {% if due_accounts %}
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Netflix Account</th>
+                                        <th>Ammount</th>
+                                        <th>Last Paid</th>
+                                        <th>Renewal date</th>
+                                        <th>Actions</th>
+                                        <th>Already paid ?</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for account in due_accounts %}
+                                    <tr>
+                                        <td>{{account.name}}</td>
+                                        <td>{{account.phone}}</td>
+                                        <td>{{account.netflix_account}}</td>
+                                        <td>{{account.amount}}</td>
+                                        <td>{{account.start_date}}</td>
+                                        <td id="due">{{account.end_date}}</td>
+                                        <td>
+                                            <a href="{% url 'editCustomer' pk=account.id %}">
+                                                <i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i
+                      ></a>
+                      <a
+                        href="{% url 'deleteCustomer' pk=account.id %}"
+                        ><i
+                          class="fa fa-trash fa-2x"
+                          style="color: red"
+                          aria-hidden="true"
+                        ></i
+                      ></a>
+
+                    </td>
+                                        <td><a href="{% url 'renewCustomer' pk=account.id %}" class="btn btn-primary">Renew Suscription</a> </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                {% else %}
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <i class="fa fa-check-circle"></i> Congratulations, All the accounts are paid for.
+                        </div>
+                        {% endif %}
+                        <style>
+                            #table {
+                                border-collapse: collapse;
+                                border-spacing: 0;
+                                background-color: white;
+                                width: 100%;
+                                border: 1px solid #ddd;
+                            }
+                            
+                            #due {
+                                color: red;
+                            }
+                        </style>
+                        </table>
+                    </div>
+                </div>
+                <!-- END TABLE HOVER -->
+            </div>
+        </div>
+
+        <div class="row container-fluid">
+            <div class="col-md-12">
+                <!-- TABLE HOVER -->
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Cusomer Accounts that are Paid</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover " id="table">
+                            <thead>
+                                {% if active_accounts %}
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Netflix Account</th>
+                                    <th>Amount</th>
+                                    <th>Last Paid</th>
+                                    <th>Renewal date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for account in active_accounts %}
+                                <tr>
+                                    <td>{{account.name}}</td>
+                                    <td>{{account.phone}}</td>
+                                    <td>{{account.netflix_account}}</td>
+                                    <td>{{account.amount}}</td>
+                                    <td>{{account.start_date}}</td>
+                                    <td>{{account.end_date}}</td>
+                                    <td>
+                                        <a href="{% url 'editCustomer' pk=account.id %}">
+                                            <i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i
+                      ></a>
+                      <a
+                        href="{% url 'deleteCustomer' pk=account.id %}"
+                        ><i
+                          class="fa fa-trash fa-2x"
+                          style="color: red"
+                          aria-hidden="true"
+                        ></i
+                      ></a>
+
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                {% else %}
+                <div class="alert alert-info alert-dismissible" role="alert">
+                  <i class="fa fa-check-circle"></i> No account is paid for.
+                    </div>
+                    {% endif %}
+                    </table>
+                </div>
+            </div>
+            <!-- END TABLE HOVER -->
+        </div>
+    </div>
+</div>
+</div>
+<!-- END MAIN CONTENT -->
+</div>
+
+{% endblock %}

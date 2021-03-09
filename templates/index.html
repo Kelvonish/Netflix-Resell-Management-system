@@ -1,0 +1,180 @@
+<!-- MAIN -->
+{% extends "base.html" %} {% block nav%}
+<li><a href="{% url 'dashboard' %}" class="active"><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
+<li><a href="{% url 'accounts' %}" class=""><i class="lnr lnr-map"></i> <span>Netflix Accounts</span></a></li>
+<li><a href="{% url 'customers'%}" class=""><i class="lnr lnr-users"></i> <span>Customers</span></a></li>
+<li><a href="{% url 'cards' %}" class=""><i class="fa fa-credit-card"></i> <span>Cards</span></a></li>
+<li><a href="{% url 'logout' %}" class=""><i class="fa fa-sign-out"></i> <span>Logout</span></a></li>
+{% endblock %} {% block content%}
+<div class="main">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- OVERVIEW -->
+            <div class="panel panel-headline">
+                <div class="panel-heading mt-3">
+                    <h3 class="panel-title">Supreme Netflix Reports</h3>
+                    <p class="panel-subtitle">As at : {{time}}</p>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <span class="icon"><i class="fa fa-users"></i></span>
+                                <p>
+                                    <span class="number">{{ totalUsers}}</span>
+                                    <span class="title">Total Netflix Customers</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <span class="icon"><i class="fa fa-shopping-bag"></i></span>
+                                <p>
+                                    <span class="number">{{totalAccounts}}</span>
+                                    <span class="title">Total Netflix Accounts</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <span class="icon"><i class="fa fa-eye"></i></span>
+                                <p>
+                                    <span class="number">Ksh {{income.amount__sum}}</span>
+                                    <span class="title">Aproximate {{month}} {{2021}} Income</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric">
+                                <span class="icon"><i class="fa fa-bar-chart"></i></span>
+                                <p>
+                                    <span class="number">Ksh {{expense.amount__sum}}</span>
+                                    <span class="title">Approximate {{month}} {{year}} Expenses</span>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END OVERVIEW -->
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- RECENT PURCHASES -->
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Upcoming Customer Account Renewals in the next one week</h3>
+                            <div class="right">
+                                <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                            </div>
+                        </div>
+                        <div class="panel-body no-padding">
+                            <table class="table table-striped">
+                                <thead>
+                                    {% if renewalCustomers %}
+                                    <tr>
+
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Netflix Account</th>
+
+                                        <th>Last Paid</th>
+                                        <th>Renewal date</th>
+                                        <th>Remaining Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account in renewalCustomers %}
+                                    <tr>
+                                        <td>{{account.name}}</td>
+                                        <td>{{account.phone}}</td>
+                                        <td>{{account.netflix_account}}</td>
+
+                                        <td>{{account.start_date}}</td>
+                                        <td id="due">{{account.end_date}}</td>
+                                        <td>{{ account.end_date|timeuntil:today }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                {% else %}
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <i class="fa fa-check-circle"></i> No accounts are nearing renewal
+                                </div>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    <!-- END RECENT PURCHASES -->
+                </div>
+                <div class="col-md-6">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Upcoming Netflix accounts that need Renewal in the next week</h3>
+                            <div class="right">
+                                <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+
+                            </div>
+                        </div>
+                        <div class="panel-body no-padding">
+                            <table class="table table-striped">
+                                <thead>
+                                    {% if renewalNetflix %}
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Password</th>
+                                        <th>Card used for payment</th>
+                                        <th>Last Paid</th>
+                                        <th>Renewal date</th>
+                                        <th>Days Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for account in renewalNetflix %}
+                                    <tr>
+
+                                        <td>{{account.email}}</td>
+                                        <td>{{account.password}}</td>
+                                        <td>{{account.card}}</td>
+                                        <td>{{account.creation_date}}</td>
+                                        <td id="due">{{account.renewal_date}}</td>
+                                        <td>{{ account.renewal_date|timeuntil:today }}</td>
+
+                                    </tr>
+
+                                    {% endfor %}
+                                </tbody>
+                                {% else %}
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <i class="fa fa-check-circle"></i> No Netflix accounts are nearing renewal
+                                </div>
+                                {% endif %}
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- END TASKS -->
+        </div>
+
+        <!-- END VISIT CHART -->
+    </div>
+
+</div>
+</div>
+</div>
+<!-- END MAIN CONTENT -->
+</div>
+<!-- END MAIN -->
+<div class="clearfix"></div>
+<footer>
+    <div class="container-fluid">
+        <p class="copyright">&copy; 2017 <a href="https://www.themeineed.com" target="_blank">Theme I Need</a>. All Rights Reserved.</p>
+    </div>
+</footer>
+</div>
+{% endblock %}

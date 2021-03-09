@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+<!-- MAIN -->
+{% block nav%}
+<li><a href="{% url 'dashboard' %}" class=""><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
+<li><a href="{% url 'accounts' %}" class=""><i class="lnr lnr-map"></i> <span>Netflix Accounts</span></a></li>
+<li><a href="{% url 'customers'%}" class=""><i class="lnr lnr-users"></i> <span>Customers</span></a></li>
+<li><a href="{% url 'cards' %}" class="active"><i class="fa fa-credit-card"></i> <span>Cards</span></a></li>
+<li><a href="{% url 'logout' %}" class=""><i class="fa fa-sign-out"></i> <span>Logout</span></a></li>
+{% endblock %} {%block content %}
+<div class="main">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid">
+            {% if messages %}
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{message.tags}} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> {{message}}
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- RECENT PURCHASES -->
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Add New Card</h3>
+                            <div class="right">
+                                <button type="button" class="btn-toggle-collapse">
+                  <i class="lnr lnr-chevron-up"></i>
+                </button>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="panel-body">
+                                <form method="POST" action="" class="form-groups">
+                                    {% if form.errors %} {% for field in form %} {% for error in field.errors %}
+                                    <div class="alert alert-danger alert-dismissible" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button> {{ error|escape }}
+                                    </div>
+
+                                    {% endfor %} {% endfor %} {% endif %} {% csrf_token %} {{ CardForm.as_p }}
+                                    <input type="submit" value="Submit" class="btn btn-primary ml-5 mb-5" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END RECENT PURCHASES -->
+                </div>
+            </div>
+
+            <div class="row container-fluid">
+                <div class="col-md-12">
+                    <!-- TABLE HOVER -->
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">All Cards</h3>
+                        </div>
+                        <div class="panel-body table-responsive-md">
+                            <table class="table table-hover" id="table">
+                                <thead>
+                                    {% if cards %}
+                                    <tr>
+                                        <th>Card Name</th>
+                                        <th>Card Number</th>
+                                        <th>Actions</th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for account in cards %}
+                                    <tr>
+                                        <td>{{account.card_name}}</td>
+                                        <td>{{account.card_number}}</td>
+                                        <td>
+                                            <a href="{% url 'editCard' pk=account.id %}">
+                                                <i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i
+                      ></a>
+                      <a
+                        href="{% url 'deleteCard' pk=account.id %}"
+                        ><i
+                          class="fa fa-trash fa-2x"
+                          style="color: red"
+                          aria-hidden="true"
+                        ></i
+                      ></a>
+
+                    </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                {% else %}
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <i class="fa fa-check-circle"></i> No cards are added
+                        </div>
+                        {% endif %}
+                        <style>
+                            #table {
+                                border-collapse: collapse;
+                                border-spacing: 0;
+                                background-color: white;
+                                width: 100%;
+                                border: 1px solid #ddd;
+                            }
+                        </style>
+                        </table>
+                    </div>
+                </div>
+                <!-- END TABLE HOVER -->
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+</div>
+
+{% endblock %}
